@@ -1,27 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 import { useSelector, useDispatch } from "react-redux";
-import {actions} from './store/index'
+import { addUser, deleteUser, updateName } from "./store/index";
 function App() {
-  const counter = useSelector((state) => state.counter);
+  const userList = useSelector((state) => state.users.value);
   const dispatch = useDispatch();
-  const increment = () => {
-    dispatch(actions.increment());
-  };
-  const decrement = () => {
-    dispatch(actions.decrement());
-  };
-  const AddBy = () => {
-    dispatch(actions.addby(10));
-  };
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [newName, setNewName] = useState("");
+  console.log(userList);
+
   return (
     <>
       <div className="App">
-        <div>App</div>
-        <h1>{counter}</h1>
-        <button onClick={increment}>Increment</button>
-        <button onClick={decrement}>Decrement</button>
-        <button onClick={AddBy}>Add value</button>
+        <div>
+          <h1>Redux Crud</h1>
+
+          <input
+          type="text"
+          placeholder="Name..."
+          onChange={(event) => {
+            setName(event.target.value);
+          }}
+        />
+        <input
+          type="text"
+          placeholder="Username..."
+          onChange={(event) => {
+            setUsername(event.target.value);
+          }}
+        />
+          <button
+          onClick={() => {
+            dispatch(
+              addUser({
+                id: userList[userList.length - 1].id + 1,
+                name,
+                username,
+              })
+            );
+          }}
+        >
+          {" "}
+          Add User
+        </button>
+        </div>
+        {userList.map((item, i) => {
+          return (
+            <div key={i} className="card" >
+              <h3>{item.name}</h3>
+              <h3>{item.username}</h3>
+              <input type="text" placeholder="name" onChange={(e)=>{setNewName(e.target.value)}} />
+              <button onClick={()=>dispatch(updateName({id:item.id,name:newName}))} >updateName</button>
+              <button onClick={()=>dispatch(deleteUser({id:item.id}))}>Delete</button>
+            </div>
+          );
+        })}
       </div>
     </>
   );
